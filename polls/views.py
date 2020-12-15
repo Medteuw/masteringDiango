@@ -6,7 +6,7 @@ from django.http import HttpResponse
 
 def index(request):
     """
-    index 
+    index  view
     """
     return  HttpResponse("Hello, world, You are at the polls index.")   
 
