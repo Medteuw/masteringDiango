@@ -4,26 +4,32 @@ from .models import Question, Choice
 from django.template import loader
 from django.urls import reverse
 from django.views import generic
+from django.utils import timezone
 
 # Create your views here.
 
 
-class IndexView(generic.ListView):
-    template_name = 'polls/index.html'
-    context_object_name = 'latest_question_list'
+def index(request):
+    """
+    index
+    """
+    latest_question = Question.objects.order_by('-date_pub')[:5]
+    #output = ', '.join([q.question_text for q in latest_question])
+    template = loader.get_template('polls/index.html')
 
-    def get_queryset(self):
-        """Return the last five published questions."""
-        
-    return Question.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')[:5]
-
+    context = {
+        'latest_question' : latest_question,
+    }
+    #return HttpResponse(template.render(context, request))
+    return render(request, 'polls/index.html' , context)
+    
 class DetailView(generic.DetailView):
     ...
     def get_queryset(self):
         """
         Excludes any questions that aren't published yet.
         """
-        return Question.objects.filter(pub_date__lte=timezone.now())
+        return Question.objects.filter(date_pub__lte=timezone.now())
 
 
 class ResultsView(generic.DetailView):
